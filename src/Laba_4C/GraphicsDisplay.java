@@ -19,6 +19,8 @@ public class GraphicsDisplay extends JPanel {
     private BasicStroke graphicsStroke;
     private BasicStroke markerStroke;
 
+
+
     // границы диапазона пространства,подлежащего отображению
     private double maxX;
     private double maxY;
@@ -28,7 +30,7 @@ public class GraphicsDisplay extends JPanel {
     // Флаговые переменные, задающие правила отображения графика
     private boolean showAxis = true;
     private boolean showMarkers = true;
-
+    private boolean showTurn = true;
     public GraphicsDisplay() {
         // Цвет заднего фона области отображения - белый
         setBackground(Color.WHITE);
@@ -73,11 +75,7 @@ public class GraphicsDisplay extends JPanel {
     protected void paintGraphics(Graphics2D canvas) {
         // Выбрать линию для рисования графика
         canvas.setStroke(graphicsStroke);
-        // Выбрать цвет линии
         canvas.setColor(Color.RED);
-        /* Будем рисовать линию графика как путь, состоящий из множества
-        сегментов (GeneralPath). Начало пути устанавливается в первую точку
-        графика, после чего прямой соединяется со следующими точками */
         GeneralPath graphics = new GeneralPath();
         for (int i = 0; i < graphicsData.length; i++) {
             // Преобразовать значения (x,y) в точку на экране point
@@ -209,20 +207,15 @@ public class GraphicsDisplay extends JPanel {
     }
 
     public void paintComponent(Graphics g) {
-        /* Шаг 1 - Вызвать метод предка для заливки области цветом заднего фона
-         * Эта функциональность - единственное, что осталось в наследство от
-         * paintComponent класса JPanel */
+
         super.paintComponent(g);
-        // Шаг 2 - Если данные графика не загружены (при показе компонента при
-        // запуске программы) - ничего не делать
+
         if (graphicsData == null || graphicsData.length == 0) return;
-        // Шаг 3 - Определить начальные границы области отображения
-        // Еѐ верхний левый угол - (minX, maxY), правый нижний - (maxX, minY)
+
         minX = graphicsData[0][0];
         maxX = graphicsData[graphicsData.length - 1][0];
         minY = graphicsData[0][1];
         maxY = minY;
-        // Найти минимальное и максимальное значение функции
         for (int i = 1; i < graphicsData.length; i++) {
             if (graphicsData[i][1] < minY) {
                 minY = graphicsData[i][1];
@@ -231,21 +224,12 @@ public class GraphicsDisplay extends JPanel {
                 maxY = graphicsData[i][1];
             }
         }
-        /* Шаг 4 - Определить (исходя из размеров окна) масштабы по осям X и Y –
-        сколько пикселов приходится на единицу длины по X и по Y */
         double scaleX = getSize().getWidth() / (maxX - minX);
         double scaleY = getSize().getHeight() / (maxY - minY);
-        // Выбрать единый масштаб как минимальный из двух
+
         scale = Math.min(scaleX, scaleY);
-        // Шаг 5 - корректировка границ области согласно выбранному масштабу
+
         if (scale == scaleX) {
-            /* Если за основу был взят масштаб по оси X, значит по оси Y
-            делений меньше, т.е. подлежащий отображению диапазон по Y будет меньше
-            высоты окна. Значит необходимо добавить делений, сделаем это так:
-            1) Вычислим, сколько делений влезет по Y при выбранном масштабе -
-            getSize().getHeight()/scale;
-            2) Вычтем из этого значения сколько делений требовалось изначально;
-            3) Набросим по половине недостающего расстояния на maxY и minY */
             double yIncrement = (getSize().getHeight() / scale - (maxY - minY)) / 2;
             maxY += yIncrement;
             minY -= yIncrement;
@@ -256,13 +240,20 @@ public class GraphicsDisplay extends JPanel {
             maxX += xIncrement;
             minX -= xIncrement;
         }
-        // Шаг 5 – Преобразовать экземпляр Graphics к Graphics2D
         Graphics2D canvas = (Graphics2D) g;
-        // Шаг 6 - Сохранить текущие настройки холста
         Stroke oldStroke = canvas.getStroke();
         Color oldColor = canvas.getColor();
         Paint oldPaint = canvas.getPaint();
         Font oldFont = canvas.getFont();
+
+
+        if (!showTurn) {
+            AffineTransform at = AffineTransform.getRotateInstance(-Math.PI/2, getSize().getWidth()/2, getSize().getHeight()/2);
+            at.concatenate(new AffineTransform(getSize().getHeight()/getSize().getWidth(), 0.0, 0.0, getSize().getWidth()/getSize().getHeight(),
+                    (getSize().getWidth()-getSize().getHeight())/2, (getSize().getHeight()-getSize().getWidth())/2));
+            canvas.setTransform(at);
+
+        }
         // Шаг 8 - В нужном порядке вызвать методы отображения элементов графика
         // Порядок вызова методов имеет значение, т.к. предыдущий рисунок будет
         // затираться последующим
@@ -287,6 +278,12 @@ public class GraphicsDisplay extends JPanel {
 
     public void setShowMarkers(boolean showMarkers) {
         this.showMarkers = showMarkers;
+        repaint();
+    }
+
+
+    public  void setTurnAction(boolean  showTurn) {
+        this.showTurn =  showTurn;
         repaint();
     }
 

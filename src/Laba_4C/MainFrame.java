@@ -4,11 +4,12 @@ package Laba_4C;
 import javax.swing.*;
 import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.io.*;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.awt.BorderLayout;
+import java.awt.Toolkit;
 
 
 public class MainFrame extends JFrame {
@@ -22,13 +23,13 @@ public class MainFrame extends JFrame {
     // Компонент-отображатель графика
     private GraphicsDisplay display = new GraphicsDisplay();
 
-    static private final int height = 800;
-    static private final int width = 600;
+    private static final int WIDTH = 800;
+    private static final int HEIGHT = 600;
 
     // Пункты меню
     private JCheckBoxMenuItem showAxisMenuItem;
     private JCheckBoxMenuItem showMarkersMenuItem;
-    private JCheckBoxMenuItem turnGraphMenuItem;
+    private JCheckBoxMenuItem shapeturnAction;
     private JMenuItem informationItem;
 
     public MainFrame(){
@@ -38,7 +39,7 @@ public class MainFrame extends JFrame {
         setLocation((kit.getScreenSize().width - WIDTH)/2,
                 (kit.getScreenSize().height - HEIGHT)/2);
         // Развѐртывание окна на весь экран
-        setExtendedState(MAXIMIZED_BOTH);
+       // setExtendedState(MAXIMIZED_BOTH);
         // Создать и установить полосу меню
         JMenuBar menuBar = new JMenuBar();
         setJMenuBar(menuBar);
@@ -68,28 +69,24 @@ public class MainFrame extends JFrame {
         // "Показывать оси координат"
         Action showAxisAction = new AbstractAction("Показывать оси координат") {
             public void actionPerformed(ActionEvent e) {
-                // свойство showAxis класса GraphicsDisplay истина,
-                // если элемент меню showAxisMenuItem отмечен флажком,
-                // ложь - в противном случае
                 display.setShowAxis(showAxisMenuItem.isSelected());
             }
         };
         showAxisMenuItem = new JCheckBoxMenuItem(showAxisAction);
-        // Добавить соответствующий элемент в меню
         graphicsMenu.add(showAxisMenuItem);
-        // Элемент по умолчанию включен (отмечен флажком)
         showAxisMenuItem.setSelected(true);
+
 
 
         Action turnAction = new AbstractAction("Поворот графика на 90 градусов") {
             public void actionPerformed(ActionEvent e) {
+                display.setTurnAction(shapeturnAction.isSelected());
+
             }
         };
-        turnGraphMenuItem = new JCheckBoxMenuItem(turnAction);
-        graphicsMenu.add(turnGraphMenuItem);
-        turnGraphMenuItem.setEnabled(false);
-        graphicsMenu.addSeparator();
-
+        shapeturnAction = new JCheckBoxMenuItem(turnAction);
+        graphicsMenu.add(shapeturnAction);
+        shapeturnAction.setSelected(true);
 
         Action aboutProgramAction=new AbstractAction("О программе") {
             @Override
