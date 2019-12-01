@@ -35,7 +35,7 @@ public class GraphicsDisplay extends JPanel {
         // Сконструировать необходимые объекты, используемые в рисовании
         // Перо для рисования графика
         graphicsStroke = new BasicStroke(4.0f, BasicStroke.CAP_ROUND,
-                BasicStroke.JOIN_ROUND, 10.0f, new float[]{12,6,12,6,12,4,4,4,4,4}, 0.0f);
+                BasicStroke.JOIN_ROUND, 10.0f, new float[]{30,5,5,5,5,5,15,5,15,5}, 0.0f);
         // Перо для рисования осей координат
         axisStroke = new BasicStroke(3.0f, BasicStroke.CAP_ROUND,
                 BasicStroke.JOIN_MITER, 10.0f, null, 0.0f);
@@ -172,49 +172,38 @@ public class GraphicsDisplay extends JPanel {
     }
 
     protected void paintMarkers(Graphics2D canvas) {
-
+        // Шаг 1 - Установить специальное перо для черчения контуров маркеров
 
         // Шаг 2 - Организовать цикл по всем точкам графика
         for (Double[] point : graphicsData) {
+
             boolean temp = true;
             double znach = point[1];
-            double S=0 ;
-
             double cifr1 = znach % 10;
-            znach=Math.floor(znach/10);
-
+            znach /= 10;
             while (abs(znach) > 0) {
-                S=S+abs(cifr1);
-                System.out.println(S);
-                cifr1=znach % 10;
-                znach=Math.floor(znach/10);
-                if (S>10) {
-
+                double cifr2 = znach % 10;
+                znach /= 10;
+                if (cifr1 < cifr2) {
                     temp = false;
                     break;
                 }
 
             }
-            if (true) {
-                // Выбрать красный цвета для контуров маркеров
-                canvas.setColor(Color.BLACK);
-                canvas.setPaint(Color.BLACK);
-
-
-            Ellipse2D.Double marker = new Ellipse2D.Double();
-
-            Point2D.Double center = xyToPoint(point[0], point[1]);
-
-            Point2D.Double corner = shiftPoint(center, 10, 10);
-
-            marker.setFrameFromCenter(center, corner);
-            canvas.draw(marker); // Начертить контур маркера
-
-            canvas.setStroke(markerStroke);
-            canvas.draw(new Line2D.Double(shiftPoint(center, -8, 0), shiftPoint(center, 8, 0)));
-            canvas.draw(new Line2D.Double(shiftPoint(center, 0, 8), shiftPoint(center, 0, -8)));
+            if (temp) {
+                canvas.setColor(Color.BLUE);
+                // Выбрать красный цвет для закрашивания маркеров внутри
+                canvas.setPaint(Color.BLUE);
+                System.out.println(point[1]);
+                canvas.setStroke(markerStroke);
+                GeneralPath path = new GeneralPath();
+                Point2D.Double center = xyToPoint(point[0], point[1]);
+                canvas.draw(new Line2D.Double(shiftPoint(center, -8, 0), shiftPoint(center, 8, 0)));
+                canvas.draw(new Line2D.Double(shiftPoint(center, 0, 8), shiftPoint(center, 0, -8)));
+                canvas.draw(new Line2D.Double(shiftPoint(center, 8, 8), shiftPoint(center, -8, -8)));
+                canvas.draw(new Line2D.Double(shiftPoint(center, -8, 8), shiftPoint(center, 8, -8)));
+                Point2D.Double corner = shiftPoint(center, 3, 3);
             }
-
 
         }
     }
