@@ -162,11 +162,44 @@ public class GraphicsDisplay extends JPanel {
             // Определить, сколько места понадобится для надписи “x”
             Rectangle2D bounds = axisFont.getStringBounds("x", context);
             Point2D.Double labelPos = xyToPoint(maxX, 0);
+            Point2D.Double labelPos2 = xyToPoint(1, 0);
+            canvas.drawString("",
+                    (float) (labelPos2.getX()  ),
+                    (float) (labelPos2.getY()));
+
             // Вывести надпись в точке с вычисленными координатами
             canvas.drawString("x",
                     (float) (labelPos.getX() - bounds.getWidth() - 10),
-                    (float) (labelPos.getY() + bounds.getY()));
+                    (float) (labelPos.getY() + bounds.getY()) - 10);
         }
+    }
+
+    public void Zad() {
+        // Сохранить массив точек во внутреннем поле класса
+        double A = 0;
+        double B = 0;
+        double znach = 0;
+        double znach2 =0;
+        boolean T = true;
+        float S = 0;
+        for (Double[] point : graphicsData) {
+
+
+
+            znach2 =  znach;
+            znach = point[1];
+
+            if(znach*znach2<=0  && znach2 !=0) {
+
+
+                T=!T;
+            }
+            if(!T) {
+                S +=abs( point[1] * point[0])/5;
+            }
+
+        }
+        System.out.println(S);
     }
 
     protected void paintMarkers(Graphics2D canvas) {
@@ -177,6 +210,7 @@ public class GraphicsDisplay extends JPanel {
 
             boolean temp = true;
             double znach = point[1];
+
             double cifr1 = znach % 10;
             znach /= 10;
             while (abs(znach) > 0) {
@@ -192,7 +226,6 @@ public class GraphicsDisplay extends JPanel {
                 canvas.setColor(Color.BLUE);
                 // Выбрать красный цвет для закрашивания маркеров внутри
                 canvas.setPaint(Color.BLUE);
-                System.out.println(point[1]);
                 canvas.setStroke(markerStroke);
                 GeneralPath path = new GeneralPath();
                 Point2D.Double center = xyToPoint(point[0], point[1]);

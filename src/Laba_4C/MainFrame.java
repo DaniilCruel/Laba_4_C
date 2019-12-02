@@ -4,12 +4,11 @@ package Laba_4C;
 import javax.swing.*;
 import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.io.*;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.awt.BorderLayout;
-import java.awt.Toolkit;
 
 
 public class MainFrame extends JFrame {
@@ -50,6 +49,8 @@ public class MainFrame extends JFrame {
         menuBar.add(graphicsMenu);
         JMenu spravkaMenu = new JMenu("Справка");
         menuBar.add(spravkaMenu);
+        JMenu Zad = new JMenu("Задание");
+        menuBar.add(Zad);
         // Создать действие по открытию файла
         Action openGraphicsAction = new AbstractAction("Открыть файл"){
             public void actionPerformed(ActionEvent arg0) {
@@ -103,7 +104,6 @@ public class MainFrame extends JFrame {
                 information.add(image);
                 information.add(Box.createVerticalStrut(10));
                 information.add(Box.createVerticalGlue());
-
                 JOptionPane.showMessageDialog(MainFrame.this,
                         information, "" +
                                 "О программе", JOptionPane.INFORMATION_MESSAGE);
@@ -111,6 +111,24 @@ public class MainFrame extends JFrame {
             }
         };
         informationItem=spravkaMenu.add(aboutProgramAction);
+        informationItem.setEnabled(true);
+
+        Action aboutzad=new AbstractAction("Подсчент площади") {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                Box zad=Box.createVerticalBox();
+                JLabel author = new JLabel("Площадь замкнутой области равна:");
+                zad.add(Box.createVerticalGlue());
+                zad.add(author);
+                display.Zad();
+
+                JOptionPane.showMessageDialog(MainFrame.this,
+                        zad, "" +
+                                "Задание 4C", JOptionPane.INFORMATION_MESSAGE);
+
+            }
+        };
+        informationItem=Zad.add(aboutzad);
         informationItem.setEnabled(true);
 
 
@@ -144,8 +162,7 @@ public class MainFrame extends JFrame {
              * Всего байт в потоке - in.available() байт;
              * Размер числа Double - Double.SIZE бит, или Double.SIZE/8 байт;
              * Так как числа записываются парами, то число пар меньше в 2 раза */
-            Double[][] graphicsData = new
-                    Double[in.available()/(Double.SIZE/8)/2][];
+            Double[][] graphicsData = new Double[in.available()/(Double.SIZE/8)/2][];
             // Шаг 3 – Цикл чтения данных (пока в потоке есть данные)
             int i = 0;
             while (in.available() > 0) {
@@ -192,6 +209,7 @@ public class MainFrame extends JFrame {
             // определяется загруженностью данных
             showAxisMenuItem.setEnabled(fileLoaded);
             showMarkersMenuItem.setEnabled(fileLoaded);
+            shapeturnAction.setEnabled(fileLoaded);
         }
 
         public void menuDeselected(MenuEvent e) {
